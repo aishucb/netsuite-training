@@ -20,6 +20,11 @@ define(['N/record'],
          */
         function pageInit(scriptContext) {
 
+            scriptContext.currentRecord.setValue({
+                fieldId : "custbody_jj_result",
+                value: "Failed"
+            });
+            return true;
         }
 
         /**
@@ -35,32 +40,25 @@ define(['N/record'],
          * @since 2015.2
          */
         function fieldChanged(scriptContext) {
-
-            let fieldid = scriptContext.fieldId;
-            if (fieldid == "custentity1") {
-                let checkboxActivated = scriptContext.currentRecord.getValue({
-                    fieldId: "custentity1"
-                });
-                log.debug("Checkbox Activated", checkboxActivated);
-                if (checkboxActivated) {
-                    let couponCode = scriptContext.currentRecord.getField({
-                        fieldId: "custentity2"
-                    });
-                    couponCode.isDisabled = false;
-
-                } else {
-                    let couponCode = scriptContext.currentRecord.getField({
-                        fieldId: "custentity2"
-                    });
-                    couponCode.isDisabled = true;
+            if (scriptContext.fieldId == 'custbody_jj_passed') {
+                let checkboxValue = scriptContext.currentRecord.getValue(
+                    {
+                        fieldId: 'custbody_jj_passed'
+                    }
+                );
+            
+                if (checkboxValue) {
                     scriptContext.currentRecord.setValue({
-                        fieldId : "custentity2",
-                        value : ""
+                        value: "Passed",
+                        fieldId: "custbody_jj_result"
                     })
-                    
+                } else {
+                    scriptContext.currentRecord.setValue({
+                        value: "Failed",
+                        fieldId: "custbody_jj_result"
+                    })
                 }
             }
-
         }
 
         /**
@@ -118,19 +116,7 @@ define(['N/record'],
          * @since 2015.2
          */
         function validateField(scriptContext) {
-            let fieldid = scriptContext.fieldId;
-            log.debug(scriptContext.fieldId);
-            if (fieldid == "custentity2") {
-                let coupon = scriptContext.currentRecord.getValue({
-                    fieldId: scriptContext.fieldId
-                })
-                let couponLength = String(coupon).length;
-                if (couponLength != 5) {
-                    alert("The coupon code should have 5 digits!!");
 
-                }
-            }
-            return true;
         }
 
         /**
@@ -189,32 +175,19 @@ define(['N/record'],
          */
         function saveRecord(scriptContext) {
 
-            if (scriptContext.currentRecord.getField({
-                fieldId: "custentity2"
-            }).isDisabled == false) {
-                let coupon = scriptContext.currentRecord.getValue({
-                    fieldId: "custentity2"
-                })
-                let couponLength = String(coupon).length;
-                if (couponLength != 5) {
-                    alert("The coupon code should have 5 digits!!");
-                    return false;
-                }
-            }
-            return true;
         }
 
         return {
-            // pageInit: pageInit,
+            pageInit: pageInit,
             fieldChanged: fieldChanged,
             // postSourcing: postSourcing,
             // sublistChanged: sublistChanged,
             // lineInit: lineInit,
-            validateField: validateField,
+            // validateField: validateField,
             // validateLine: validateLine,
             // validateInsert: validateInsert,
             // validateDelete: validateDelete,
-            saveRecord: saveRecord
+            // saveRecord: saveRecord
         };
 
     });
